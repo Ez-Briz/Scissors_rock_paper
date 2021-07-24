@@ -31,26 +31,26 @@ namespace Task3
             byte[] key = new byte[byteBufferSize];
             RandomNumberGenerator keyGenerator;
             (key, keyGenerator) = GenerateKey();
-            int ans = GenerateAns(keyGenerator, playables.Length);
-            byte[] HMAC = GenerateHMAC(key, ans);
+            int pcStep = GenerateAns(keyGenerator, playables.Length);
+            byte[] HMAC = GenerateHMAC(key, pcStep);
 
             Console.WriteLine("HMAC = " + BitConverter.ToString(HMAC).Replace("-", ""));
-            int chose = -1;
+            int playerStep = -1;
             do
             {
                 PrintAbles(playables);
                 Console.Write("Enter your move: ");
-                chose = Convert.ToInt32(Console.ReadLine()) - 1;
+                playerStep = Convert.ToInt32(Console.ReadLine()) - 1;
             }
-            while(chose >= playables.Length || chose < 0);
-            Console.WriteLine("Your move = " + playables[Convert.ToInt32(chose)]);
-            Console.WriteLine("PC move = " + playables[ans]);
-            if (ans == chose)
+            while(playerStep >= playables.Length || playerStep < 0);
+            Console.WriteLine("Your move = " + playables[Convert.ToInt32(playerStep)]);
+            Console.WriteLine("PC move = " + playables[pcStep]);
+            if (pcStep == playerStep)
             {
                 Console.WriteLine("Tie!");
             }
-            else if ((ans - chose <= Convert.ToInt32(playables.Length/2) && ans - chose > 0) ||
-                (ans - chose < 0 - Convert.ToInt32(playables.Length/2)))
+            else if ((pcStep - playerStep <= Convert.ToInt32(playables.Length/2) && pcStep - playerStep > 0) ||
+                (pcStep - playerStep < 0 - Convert.ToInt32(playables.Length/2)))
             {
                 Console.WriteLine("You lose!");
                 Console.WriteLine("Key = " + BitConverter.ToString(key).Replace("-", ""));
@@ -73,16 +73,16 @@ namespace Task3
 
         static int GenerateAns(RandomNumberGenerator keyGenerator, int length)
         {
-            byte[] compChose = new byte[sizeof(int)];
-            keyGenerator.GetBytes(compChose, 0, compChose.Length);
-            return (Math.Abs(BitConverter.ToInt32(compChose, 0)) % length);
+            byte[] compplayerStep = new byte[sizeof(int)];
+            keyGenerator.GetBytes(compplayerStep, 0, compplayerStep.Length);
+            return (Math.Abs(BitConverter.ToInt32(compplayerStep, 0)) % length);
         }
-        static byte[] GenerateHMAC(byte[] key, int ans)
+        static byte[] GenerateHMAC(byte[] key, int pcStep)
         {
             using (var hmac = new HMACSHA256(key))
             {
                 byte[] hmacBytes = new byte[key.Length];
-                hmacBytes = hmac.ComputeHash(Encoding.Default.GetBytes(ans.ToString()));
+                hmacBytes = hmac.ComputeHash(Encoding.Default.GetBytes(pcStep.ToString()));
                 return hmacBytes;
             }
         }
