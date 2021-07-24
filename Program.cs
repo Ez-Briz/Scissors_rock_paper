@@ -56,7 +56,7 @@ namespace Task3
                 Console.WriteLine("Key = " + BitConverter.ToString(key).Replace("-", ""));
             }
             else
-            {M
+            {
                 Console.WriteLine("You win!");
             }
             Console.Read();
